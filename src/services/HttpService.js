@@ -19,6 +19,27 @@ export const GetWithoutAuth = (url) => {
   return request;
 };
 
+export const DeleteWithoutAuth = (url) => {
+  let request = fetch(url, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return request;
+};
+
+export const PutWithoutAuth = (url, body) => {
+  let request = fetch(url, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  return request;
+};
+
 // Auth Requests
 export const PutWithAuth = (url, body) => {
   let request = fetch(url, {
