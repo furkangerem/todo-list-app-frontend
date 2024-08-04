@@ -6,6 +6,13 @@ import {
   Typography,
   Chip,
   Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  useTheme,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -39,9 +46,11 @@ const getStatusColor = (status) => {
 };
 
 const Todo = ({ todo, onDelete, onUpdate }) => {
+  const theme = useTheme();
   const priorityColor = getPriorityColor(todo.todoPriority);
   const statusColor = getStatusColor(todo.todoStatus);
   const [openEditPopup, setOpenEditPopup] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [completed, setCompleted] = useState(todo.todoStatus === "DONE");
 
   useEffect(() => {
@@ -51,6 +60,7 @@ const Todo = ({ todo, onDelete, onUpdate }) => {
   const handleDelete = async () => {
     await DeleteWithoutAuth(`http://localhost:8080/api/todos/${todo.id}`);
     onDelete(todo.id);
+    setOpenDeleteDialog(false);
   };
 
   const handleSave = async (updatedTodo) => {
@@ -174,7 +184,10 @@ const Todo = ({ todo, onDelete, onUpdate }) => {
           >
             <EditIcon />
           </IconButton>
-          <IconButton onClick={handleDelete} sx={{ color: "#FF4500" }}>
+          <IconButton
+            onClick={() => setOpenDeleteDialog(true)}
+            sx={{ color: "#FF4500" }}
+          >
             <DeleteIcon />
           </IconButton>
         </Box>
@@ -185,6 +198,55 @@ const Todo = ({ todo, onDelete, onUpdate }) => {
         todo={todo}
         onSave={handleSave}
       />
+      <Dialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+        PaperProps={{
+          style: {
+            backgroundColor: "#564F6F",
+            color: "#D1D7E0",
+            borderRadius: "12px",
+            padding: theme.spacing(2),
+          },
+        }}
+      >
+        <DialogTitle sx={{ fontWeight: "bold", textAlign: "left" }}>
+          Delete Todo
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText
+            sx={{ color: "#D1D7E0", textAlign: "left", mb: 2 }}
+          >
+            Are you sure you want to delete this todo item?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: "flex-end" }}>
+          <Button
+            onClick={() => setOpenDeleteDialog(false)}
+            sx={{
+              backgroundColor: "#DC3545",
+              color: "#FFFFFF",
+              "&:hover": {
+                backgroundColor: "#C82333",
+              },
+            }}
+          >
+            No
+          </Button>
+          <Button
+            onClick={handleDelete}
+            sx={{
+              backgroundColor: "#28A745",
+              color: "#FFFFFF",
+              "&:hover": {
+                backgroundColor: "#218838",
+              },
+            }}
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

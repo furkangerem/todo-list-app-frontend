@@ -61,31 +61,18 @@ const Home = () => {
 
   return (
     <Container>
-      <Box
-        sx={{
-          mt: 4,
-        }}
-      >
-        <FilterBar filter={filter} setFilter={setFilter} />
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          mt: "16px",
-        }}
-      >
+      <Box sx={{ mb: 2 }}>
         <NewTodo refreshTodos={refreshTodos} />
-        {filteredTodoList.map((todo) => (
-          <Todo
-            key={todo.id}
-            todo={todo}
-            onDelete={handleDelete}
-            onUpdate={handleUpdate}
-          />
-        ))}
       </Box>
+      <FilterBar filter={filter} setFilter={setFilter} />
+      {filteredTodoList.map((todo) => (
+        <Todo
+          key={todo.id}
+          todo={todo}
+          onDelete={handleDelete}
+          onUpdate={handleUpdate}
+        />
+      ))}
     </Container>
   );
 };

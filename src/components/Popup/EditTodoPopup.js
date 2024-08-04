@@ -12,9 +12,11 @@ import {
   Typography,
 } from "@mui/material";
 import { PutWithoutAuth } from "../../services/HttpService";
+import MessageSnackbar from "../Message/MessageSnackbar";
 
 const EditTodoPopup = ({ open, onClose, todo, onSave }) => {
   const [editedTodo, setEditedTodo] = useState(todo);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   useEffect(() => {
     setEditedTodo(todo);
@@ -32,83 +34,96 @@ const EditTodoPopup = ({ open, onClose, todo, onSave }) => {
       todoPriority: editedTodo.todoPriority,
       todoStatus: editedTodo.todoStatus,
     });
-    onSave(editedTodo); // Update parent component
+    setSnackbarOpen(true);
+    onSave(editedTodo);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      PaperProps={{ sx: { bgcolor: "#564F6F" } }}
-    >
-      <DialogTitle sx={{ color: "#D1D7E0" }}>Edit Todo</DialogTitle>
-      <DialogContent>
-        <TextField
-          autoFocus
-          margin="dense"
-          label="Title"
-          name="title"
-          value={editedTodo.title || ""}
-          onChange={handleChange}
-          fullWidth
-          sx={{
-            input: { color: "#D1D7E0" },
-            "& .MuiInputLabel-root": { color: "#D1D7E0" },
-          }}
-        />
-        <TextField
-          margin="dense"
-          label="Text"
-          name="text"
-          value={editedTodo.text || ""}
-          onChange={handleChange}
-          fullWidth
-          multiline
-          sx={{
-            input: { color: "#D1D7E0" },
-            "& .MuiInputLabel-root": { color: "#D1D7E0" },
-          }}
-        />
-        <Box mt={1}>
-          <Typography sx={{ color: "#2D283E" }}>Status</Typography>
-          <Select
+    <>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        PaperProps={{ sx: { bgcolor: "#564F6F" } }}
+      >
+        <DialogTitle sx={{ color: "#D1D7E0" }}>Edit Todo</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
             margin="dense"
-            name="todoStatus"
-            value={editedTodo.todoStatus || ""}
+            label="Title"
+            name="title"
+            value={editedTodo.title || ""}
             onChange={handleChange}
             fullWidth
-            sx={{ color: "#D1D7E0" }}
-          >
-            <MenuItem value="ONGOING">ONGOING</MenuItem>
-            <MenuItem value="CANCELED">CANCELED</MenuItem>
-            <MenuItem value="DONE">DONE</MenuItem>
-          </Select>
-        </Box>
-        <Box mt={1}>
-          <Typography sx={{ color: "#2D283E" }}>Priority</Typography>
-          <Select
+            sx={{
+              input: { color: "#D1D7E0" },
+              "& .MuiInputLabel-root": { color: "#D1D7E0" },
+            }}
+          />
+          <TextField
             margin="dense"
-            name="todoPriority"
-            value={editedTodo.todoPriority || ""}
+            label="Text"
+            name="text"
+            value={editedTodo.text || ""}
             onChange={handleChange}
             fullWidth
-            sx={{ color: "#D1D7E0" }}
-          >
-            <MenuItem value="LOW">LOW</MenuItem>
-            <MenuItem value="MEDIUM">MEDIUM</MenuItem>
-            <MenuItem value="HIGH">HIGH</MenuItem>
-          </Select>
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSave} sx={{ color: "#FFD700" }}>
-          Save
-        </Button>
-        <Button onClick={onClose} sx={{ color: "#FF4500" }}>
-          Cancel
-        </Button>
-      </DialogActions>
-    </Dialog>
+            multiline
+            sx={{
+              input: { color: "#D1D7E0" },
+              "& .MuiInputLabel-root": { color: "#D1D7E0" },
+            }}
+          />
+          <Box mt={1}>
+            <Typography sx={{ color: "#2D283E" }}>Status</Typography>
+            <Select
+              margin="dense"
+              name="todoStatus"
+              value={editedTodo.todoStatus || ""}
+              onChange={handleChange}
+              fullWidth
+              sx={{ color: "#D1D7E0" }}
+            >
+              <MenuItem value="ONGOING">ONGOING</MenuItem>
+              <MenuItem value="CANCELED">CANCELED</MenuItem>
+              <MenuItem value="DONE">DONE</MenuItem>
+            </Select>
+          </Box>
+          <Box mt={1}>
+            <Typography sx={{ color: "#2D283E" }}>Priority</Typography>
+            <Select
+              margin="dense"
+              name="todoPriority"
+              value={editedTodo.todoPriority || ""}
+              onChange={handleChange}
+              fullWidth
+              sx={{ color: "#D1D7E0" }}
+            >
+              <MenuItem value="LOW">LOW</MenuItem>
+              <MenuItem value="MEDIUM">MEDIUM</MenuItem>
+              <MenuItem value="HIGH">HIGH</MenuItem>
+            </Select>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleSave} sx={{ color: "#FFD700" }}>
+            Save
+          </Button>
+          <Button onClick={onClose} sx={{ color: "#FF4500" }}>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <MessageSnackbar
+        open={snackbarOpen}
+        onClose={handleSnackbarClose}
+        message="Todo updated successfully!"
+        severity="success"
+      />
+    </>
   );
 };
 

@@ -8,9 +8,11 @@ import {
   Chip,
 } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import MessageSnackbar from "../Message/MessageSnackbar";
 
 const FilterBar = ({ filter, setFilter }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleFilterClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -20,6 +22,7 @@ const FilterBar = ({ filter, setFilter }) => {
     setAnchorEl(null);
     if (status) {
       setFilter(status);
+      setSnackbarOpen(true);
     }
   };
 
@@ -34,6 +37,10 @@ const FilterBar = ({ filter, setFilter }) => {
       default:
         return "#6C757D";
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -106,6 +113,12 @@ const FilterBar = ({ filter, setFilter }) => {
           }}
         />
       </Box>
+      <MessageSnackbar
+        open={snackbarOpen}
+        onClose={handleSnackbarClose}
+        message="Filtering successful!"
+        severity="success"
+      />
     </Box>
   );
 };

@@ -12,17 +12,36 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { PostWithoutAuth } from "../../services/HttpService";
+import MessageSnackbar from "../Message/MessageSnackbar";
 
 const NewTodo = ({ refreshTodos }) => {
   const [text, setText] = useState("");
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState("LOW");
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   const handleSubmit = async () => {
-    await saveNewTodo();
-    setTitle("");
-    setText("");
-    refreshTodos();
+    const response = await saveNewTodo();
+    if (response.ok) {
+      setSnackbar({
+        open: true,
+        message: "Todo created successfully!",
+        severity: "success",
+      });
+      setTitle("");
+      setText("");
+      refreshTodos();
+    } else {
+      setSnackbar({
+        open: true,
+        message: "Failed to create Todo!",
+        severity: "error",
+      });
+    }
   };
 
   const saveNewTodo = async () => {
@@ -34,20 +53,22 @@ const NewTodo = ({ refreshTodos }) => {
         todoPriority: priority,
         userId: 1,
       });
-      if (res.ok) {
-        return await res.json();
-      } else {
-        console.log("Failed to add new todo");
-      }
+      return res;
     } catch (err) {
       console.log("error", err);
+      return { ok: false };
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
     <Box
       component="section"
       sx={{
+        mt: 4,
         p: 2,
         border: "1px solid",
         borderColor: "#2D283E",
@@ -167,6 +188,12 @@ const NewTodo = ({ refreshTodos }) => {
           ADD
         </Button>
       </Box>
+      <MessageSnackbar
+        open={snackbar.open}
+        onClose={handleCloseSnackbar}
+        message={snackbar.message}
+        severity={snackbar.severity}
+      />
     </Box>
   );
 };
